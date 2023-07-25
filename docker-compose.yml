@@ -1,0 +1,26 @@
+version: '3'
+services:
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: ${PASSWORD}
+      MYSQL_DATABASE: ${NAME}
+      MYSQL_USER: ${USER}
+      MYSQL_PASSWORD: ${PASSWORD}
+      TZ: 'Asia/Jakarta'
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    volumes:
+      - ./mysql:/var/lib/mysql
+  web:
+    build: app
+    command: python3 manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./app:/code
+    env_file:
+      - ./.env
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    links:
+      - db
